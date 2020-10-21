@@ -18,4 +18,18 @@ func main() {
 	}
 
 	fmt.Println(status)
+
+	playlist, err := vlc.Playlist()
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, p := range playlist.Songs {
+		fmt.Println(p.ID)
+		fmt.Println(p.Name)
+		fmt.Println(p.Duration)
+		fmt.Print("\n\n")
+	}
+
+	fmt.Println(status)
 }

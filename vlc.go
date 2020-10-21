@@ -7,8 +7,8 @@ import (
 )
 
 type Vlc interface {
-	Status() (Status, error)
 	Playlist() (Playlist, error)
+	Status() (Status, error)
 }
 
 type vlc struct {
@@ -64,4 +64,35 @@ func (vlc *vlc) Status() (Status, error) {
 	}
 
 	return status, nil
+}
+
+// Playlist
+type Playlist struct {
+	Songs []PlaylistSong `xml:"node>leaf"`
+}
+
+// Playlist song
+type PlaylistSong struct {
+	ID       int    `xml:"id,attr"`
+	Name     string `xml:"name,attr"`
+	Current  string `xml:"current,attr"`
+	Duration int    `xml:"duration,attr"`
+}
+
+func (vlc *vlc) Playlist() (Playlist, error) {
+	url := fmt.Sprintf("%s/requests/playlist.xml", vlc.address)
+
+	res, err := get(url, vlc.password)
+	if err != nil {
+		return Playlist{}, err
+	}
+	defer res.Body.Close()
+
+	var playlist Playlist
+	err = xml.NewDecoder(res.Body).Decode(&playlist)
+	if err != nil {
+		return Playlist{}, err
+	}
+
+	return playlist, nil
 }
