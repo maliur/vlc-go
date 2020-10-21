@@ -7,11 +7,10 @@ import (
 )
 
 func main() {
-	vlcAddress := "http://127.0.0.1"
-	vlcPort := "8080"
+	vlcAddress := "http://192.168.1.16:8080"
 	vlcPasword := "12345"
 
-	vlc := vlc.New(vlcAddress, vlcPort, vlcPasword)
+	vlc := vlc.New(vlcAddress, vlcPasword)
 
 	status, err := vlc.Status()
 	if err != nil {

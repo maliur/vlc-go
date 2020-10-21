@@ -8,19 +8,18 @@ import (
 
 type Vlc interface {
 	Status() (Status, error)
+	Playlist() (Playlist, error)
 }
 
 type vlc struct {
 	address  string
-	port     string
 	password string
 }
 
 // Create a new Vlc client
-func New(address, port, password string) *vlc {
+func New(address, password string) *vlc {
 	return &vlc{
 		address,
-		port,
 		password,
 	}
 }
@@ -50,7 +49,7 @@ type Status struct {
 
 // Get the current status from vlc
 func (vlc *vlc) Status() (Status, error) {
-	url := fmt.Sprintf("%s:%s/requests/status.xml", vlc.address, vlc.port)
+	url := fmt.Sprintf("%s/requests/status.xml", vlc.address)
 
 	res, err := get(url, vlc.password)
 	if err != nil {
