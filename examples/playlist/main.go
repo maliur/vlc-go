@@ -28,4 +28,10 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	
+	// play next song in playlist
+	err = vlcClient.NextSong()
+	if err != nil {
+		fmt.Println(err)
+	}
 }
