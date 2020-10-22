@@ -14,11 +14,11 @@ Get the current status of VLC
 ```go
 func main() {
     vlcAddress := "http://localhost:8080"
-    vlcPasword := "12345"
+    vlcPassword := "12345"
 
-    vlc := vlc.New(vlcAddress, vlcPasword)
+    vlcClient := vlc.New(vlcAddress, vlcPassword)
 
-    status, err := vlc.Status()
+    status, err := vlcClient.Status()
 
     if err != nil {
         fmt.Println(err)
