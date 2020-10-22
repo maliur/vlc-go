@@ -29,6 +29,8 @@ type Vlc interface {
 	Status() (Status, error)
 	// Enqueue song in playlist
 	AddSong(url string, playNow bool) error
+	// Play next song in playlist
+	NextSong() error
 }
 
 type vlc struct {
@@ -132,6 +134,18 @@ func (vlc *vlc) AddSong(url string, playNow bool) error {
 	}
 
 	uri := fmt.Sprintf("%s/requests/status.xml?command=%s&input=%s", vlc.address, cmd, url)
+
+	res, err := get(uri, vlc.password)
+	if err != nil {
+		return err
+	}
+	defer res.Body.Close()
+
+	return nil
+}
+
+func (vlc *vlc) NextSong() error {
+	uri := fmt.Sprintf("%s/requests/status.xml?command=pl_next", vlc.address)
 
 	res, err := get(uri, vlc.password)
 	if err != nil {

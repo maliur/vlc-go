@@ -91,3 +91,23 @@ func TestAddSong(t *testing.T) {
 		t.Fatalf("%v", err)
 	}
 }
+
+func TestNextSong(t *testing.T) {
+	testHandler := func(w http.ResponseWriter, req *http.Request) {
+		assert.Equal(t, req.Method, "GET")
+		assert.NotNil(t, req.Header.Get("Authorization"))
+		assert.True(t, strings.Contains(req.URL.RawQuery, "command=pl_next"))
+
+		fmt.Fprintf(w, "OK")
+	}
+
+	testServer := httptest.NewServer(http.HandlerFunc(testHandler))
+	defer testServer.Close()
+
+	vlcClient := NewClient(testServer.URL, "1234")
+
+	err := vlcClient.NextSong()
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
+}
