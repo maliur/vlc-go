@@ -2,7 +2,7 @@ run:
 	go build -o ./vlcgo examples/status/main.go && ./vlcgo
 
 test:
-	go test ./...
+	go test
 
 lint:
 	golangci-lint run ./...

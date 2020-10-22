@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -27,9 +28,9 @@ func TestStatus(t *testing.T) {
 	testServer := httptest.NewServer(http.HandlerFunc(testHandler))
 	defer testServer.Close()
 
-	vlc := New(testServer.URL, "1234")
+	vlcClient := NewClient(testServer.URL, "1234")
 
-	status, err := vlc.Status()
+	status, err := vlcClient.Status()
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
@@ -58,12 +59,35 @@ func TestPlaylist(t *testing.T) {
 	testServer := httptest.NewServer(http.HandlerFunc(testHandler))
 	defer testServer.Close()
 
-	vlc := New(testServer.URL, "1234")
+	vlcClient := NewClient(testServer.URL, "1234")
 
-	playlist, err := vlc.Playlist()
+	playlist, err := vlcClient.Playlist()
 	if err != nil {
 		t.Fatalf("%v", err)
 	}
 
 	assert.Equal(t, 2, len(playlist.Songs))
+}
+
+func TestAddSong(t *testing.T) {
+	songUrl := "https://youtu.be/dQw4w9WgXcQ"
+
+	testHandler := func(w http.ResponseWriter, req *http.Request) {
+		assert.Equal(t, req.Method, "GET")
+		assert.NotNil(t, req.Header.Get("Authorization"))
+		assert.True(t, strings.Contains(req.URL.RawQuery, songUrl))
+		assert.True(t, strings.Contains(req.URL.RawQuery, "in_enqueue"))
+
+		fmt.Fprintf(w, "OK")
+	}
+
+	testServer := httptest.NewServer(http.HandlerFunc(testHandler))
+	defer testServer.Close()
+
+	vlcClient := NewClient(testServer.URL, "1234")
+
+	err := vlcClient.AddSong(songUrl, false)
+	if err != nil {
+		t.Fatalf("%v", err)
+	}
 }
