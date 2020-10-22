@@ -1,3 +1,5 @@
+[![Actions Status](https://github.com/maliur/vlc-go/workflows/build/badge.svg)](https://github.com/maliur/vlc-go/actions) [![Actions Status](https://github.com/maliur/vlc-go/workflows/tests/badge.svg)](https://github.com/maliur/vlc-go/actions)
+
 # vlcgo
 
 A Library to interact with [VLC media player](https://www.videolan.org/)
