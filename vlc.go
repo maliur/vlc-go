@@ -7,7 +7,42 @@ import (
 )
 
 type Status struct {
-	State string
+	State       string
+	Information struct {
+		Category []struct {
+			Info []struct {
+				Text string
+				Name string
+			}
+		}
+	}
+}
+
+func (s Status) Song() string {
+	if len(s.Information.Category) > 0 {
+		category := s.Information.Category[0]
+
+		for _, info := range category.Info {
+			if info.Name == "title" {
+				return info.Text
+			}
+		}
+	}
+
+	return ""
+}
+
+func (s Status) Artist() string {
+	if len(s.Information.Category) > 0 {
+		category := s.Information.Category[0]
+		for _, info := range category.Info {
+			if info.Name == "artist" {
+				return info.Text
+			}
+		}
+	}
+
+	return ""
 }
 
 type Playlist struct {
@@ -74,7 +109,15 @@ func (vlc *vlc) Status() (Status, error) {
 	defer res.Body.Close()
 
 	type xmlStatus struct {
-		State string `xml:"state"`
+		State       string `xml:"state"`
+		Information struct {
+			Category []struct {
+				Info []struct {
+					Text string `xml:",chardata"`
+					Name string `xml:"name,attr"`
+				} `xml:"info"`
+			} `xml:"category"`
+		} `xml:"information"`
 	}
 
 	var status xmlStatus

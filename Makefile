@@ -1,6 +1,9 @@
 run:
 	go build -o ./vlcgo examples/status/main.go && ./vlcgo
 
+playlist:
+	go build -o ./vlcgo examples/playlist/main.go && ./vlcgo
+
 test:
 	go test
 

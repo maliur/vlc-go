@@ -18,6 +18,24 @@ func TestStatus(t *testing.T) {
 		status := `
 		<root>
 		  <state>stopped</state>
+          <information>
+              <category name="meta">
+                  <info name='album'>F-Zero</info>
+                  <info name='filename'>04 Fire Field.mp3</info>
+                  <info name='copyright'>1990 Nintendo</info>
+                  <info name='dumper'>Datschge</info>
+                  <info name='artist'>Yumiko Kanki</info>
+                  <info name='title'>Fire Field</info>
+              </category>
+              <category name='Stream 0'>
+                  <info name='Bitrate'>320 kb/s</info>
+                  <info name='Codec'>MPEG Audio layer 1/2 (mpga)</info>
+                  <info name='Channels'>Stereo</info>
+                  <info name='Bits per sample'>32</info>
+                  <info name='Sample rate'>44100 Hz</info>
+                  <info name='Type'>Audio</info>
+              </category>
+          </information>
 		</root>`
 
 		w.Header().Set("Content-Type", "text/xml")
@@ -36,6 +54,8 @@ func TestStatus(t *testing.T) {
 	}
 
 	assert.Equal(t, "stopped", status.State)
+	assert.Equal(t, "Yumiko Kanki", status.Artist())
+	assert.Equal(t, "Fire Field", status.Song())
 }
 
 func TestPlaylist(t *testing.T) {
@@ -43,7 +63,7 @@ func TestPlaylist(t *testing.T) {
 		assert.Equal(t, req.Method, "GET")
 		assert.NotNil(t, req.Header.Get("Authorization"))
 
-		status := `
+		playlist := `
 		<node ro="rw" name="" id="0">
   			<node ro="ro" name="Playlist" id="1">
     			<leaf ro="rw" name="Foo song" id="4" duration="226" uri="foo.mp3" current="current"/>
@@ -53,7 +73,7 @@ func TestPlaylist(t *testing.T) {
 
 		w.Header().Set("Content-Type", "text/xml")
 
-		fmt.Fprint(w, status)
+		fmt.Fprint(w, playlist)
 	}
 
 	testServer := httptest.NewServer(http.HandlerFunc(testHandler))
