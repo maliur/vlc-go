@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	vlcClient := vlc.NewClient("http://localhost:8080", "12345")
+	vlcClient := vlc.NewClient("http://192.168.1.12:8080", "12345")
 	playlist, err := vlcClient.Playlist()
 	if err != nil {
 		fmt.Println(err)
@@ -28,7 +28,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	
+
 	// play next song in playlist
 	err = vlcClient.NextSong()
 	if err != nil {

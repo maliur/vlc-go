@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"net/http"
+	"net/url"
 )
 
 type Status struct {
@@ -63,7 +64,7 @@ type Vlc interface {
 	// Get the current status from vlc
 	Status() (Status, error)
 	// Enqueue song in playlist
-	AddSong(url string, playNow bool) error
+	AddSong(uri string, playNow bool) error
 	// Play next song in playlist
 	NextSong() error
 }
@@ -81,14 +82,14 @@ func NewClient(address, password string) Vlc {
 	}
 }
 
-func get(url, password string) (*http.Response, error) {
+func get(uri, password string) (*http.Response, error) {
 	client := &http.Client{}
-	req, err := http.NewRequest("GET", url, nil)
+	req, err := http.NewRequest("GET", uri, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	req.SetBasicAuth("", password)
+	req.SetBasicAuth("", url.QueryEscape(password))
 	req.Header.Add("Accept", "text/xml")
 
 	res, err := client.Do(req)
@@ -100,9 +101,9 @@ func get(url, password string) (*http.Response, error) {
 }
 
 func (vlc *vlc) Status() (Status, error) {
-	url := fmt.Sprintf("%s/requests/status.xml", vlc.address)
+	uri := fmt.Sprintf("%s/requests/status.xml", vlc.address)
 
-	res, err := get(url, vlc.password)
+	res, err := get(uri, vlc.password)
 	if err != nil {
 		return Status{}, err
 	}
@@ -130,9 +131,9 @@ func (vlc *vlc) Status() (Status, error) {
 }
 
 func (vlc *vlc) Playlist() (Playlist, error) {
-	url := fmt.Sprintf("%s/requests/playlist.xml", vlc.address)
+	uri := fmt.Sprintf("%s/requests/playlist.xml", vlc.address)
 
-	res, err := get(url, vlc.password)
+	res, err := get(uri, vlc.password)
 	if err != nil {
 		return Playlist{}, err
 	}
@@ -170,15 +171,15 @@ func (vlc *vlc) Playlist() (Playlist, error) {
 	return playlist, nil
 }
 
-func (vlc *vlc) AddSong(url string, playNow bool) error {
+func (vlc *vlc) AddSong(uri string, playNow bool) error {
 	cmd := "in_enqueue"
 	if playNow {
 		cmd = "in_play"
 	}
 
-	uri := fmt.Sprintf("%s/requests/status.xml?command=%s&input=%s", vlc.address, cmd, url)
+	statusUri := fmt.Sprintf("%s/requests/status.xml?command=%s&input=%s", vlc.address, cmd, uri)
 
-	res, err := get(uri, vlc.password)
+	res, err := get(statusUri, vlc.password)
 	if err != nil {
 		return err
 	}

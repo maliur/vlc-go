@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	vlcAddress := "http://localhost:8080"
+	vlcAddress := "http://192.168.1.12:8080"
 	vlcPasword := "12345"
 
 	vlcClient := vlc.NewClient(vlcAddress, vlcPasword)
